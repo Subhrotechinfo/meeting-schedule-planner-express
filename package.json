@@ -4,11 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./node_modules/.bin/nodemon start.js"
   },
   "author": "Subhro Chatterjee",
   "license": "Apache-2.0",
   "dependencies": {
+    "bcrypt": "^3.0.4",
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.4",
+    "express": "^4.16.4",
+    "http": "0.0.0",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.23",
+    "mongoose": "^5.4.18",
+    "nodemon": "^1.18.10",
+    "pino": "^5.11.1",
+    "shortid": "^2.2.14",
     "yarn": "^1.13.0"
   }
 }
