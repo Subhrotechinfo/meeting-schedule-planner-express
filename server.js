@@ -1,16 +1,15 @@
-let express =require('express');
-let mongoose  = require('mongoose');
-let fs = require('fs');
-let http = require('http');
-
-let config = require('./config/config');
-let  { port , dbStrng }  = config ;
-let log = require('./app/libs/logger'); 
-let  { loggerInfo, loggerError } =log;
+const express =require('express');
+const mongoose  = require('mongoose');
+const fs = require('fs');
+const http = require('http');
+let  { port , dbStrng }  = require('./config/config') ;
+let  { loggerInfo, loggerError } = require('./app/libs/logger');
 
 let user_route = require('./app/routes/user')
-let path = require('path');
-let bodyParser = require('body-parser')
+
+const bodyParser = require('body-parser')
+const expressValidator = require('express-validator');
+
 
 //create an instance of express
 let app = express();
@@ -20,6 +19,7 @@ let routesPath = './app/routes';
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressValidator());
 
 app.use('/',user_route);
 
@@ -46,7 +46,7 @@ fs.readdirSync(routesPath).forEach((file)=>{
  */
 
 let server =  http.createServer(app);
-console.log(`${config.port}`);
+console.log(`${port}`);
 // server.on('error', onError);
 // server.on('listening', onListening);
 
@@ -117,5 +117,4 @@ mongoose.connection.on('open', (err) => {
 });
 
 module.exports = app;
-
 

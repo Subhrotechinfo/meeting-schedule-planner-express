@@ -1,5 +1,5 @@
 let mongoose  = require('mongoose');
-Schema = mongoose.Schema;
+let Schema = mongoose.Schema;
 
 let userSchema = new Schema({
     userId: {
@@ -37,7 +37,7 @@ let userSchema = new Schema({
         default:null
     },
     last_login: {
-        type: Number,
+        type: Date,
         default: null
     },
     resetPassword: {
@@ -52,7 +52,7 @@ let userSchema = new Schema({
     },
     email_verified:{
         type:String,
-        default: ''
+        default: 'No'
     },
     validationToken:{
         type: String,
@@ -65,7 +65,7 @@ let userSchema = new Schema({
 
 });
 
-mongoose.model('User', userSchema);
+module.exports =  mongoose.model('User', userSchema);
 
 
 
