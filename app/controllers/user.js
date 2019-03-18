@@ -274,6 +274,7 @@ let verifyEmail = (req,res) => {
 }
 
 let resetPassword = (req,res) => {
+
     let findUser = () => {
         return new Promise((resolve, reject) => {
             if(req.body.emailId) {

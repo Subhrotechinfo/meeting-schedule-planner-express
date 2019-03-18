@@ -92,7 +92,7 @@ console.log(`${port}`);
 //     console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
 // });
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log('Example app listening on port 3000');
     let db = mongoose.connect(dbStrng, {useNewUrlParser: true});
     console.log('Connected to MongoDB');

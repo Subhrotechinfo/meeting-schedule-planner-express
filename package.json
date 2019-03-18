@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/.bin/nodemon start.js"
+    "dev": "nodemon server.js"
   },
   "author": "Subhro Chatterjee",
   "license": "Apache-2.0",
@@ -20,9 +20,12 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.23",
     "mongoose": "^5.4.18",
-    "nodemon": "^1.18.10",
     "pino": "^5.11.1",
     "shortid": "^2.2.14",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10",
     "yarn": "^1.13.0"
   }
 }
