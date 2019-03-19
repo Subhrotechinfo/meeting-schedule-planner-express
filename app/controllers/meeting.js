@@ -4,12 +4,13 @@ const {loggerInfo, loggerError} = require('../libs/logger')
 const {generatejson} = require('../libs/response')
 const {now} = require('../libs/time')
 const { isEmpty } = require('../libs/check')
+
+const User = require('../models/user');
 const UserModel = mongoose.model('User');
 const Meeting = require('../models/meeting')
 const MeetingModel = mongoose.model('Meeting');
 
 module.exports.addMeeting = (req,res) => {
-    console.log('sss')
     let validateUserInput = () => {
         return new Promise((resolve, reject) => {
             if(req.body.meetingTopic && req.body.hostId && req.body.hostName && req.body.participantId 
@@ -61,23 +62,53 @@ module.exports.addMeeting = (req,res) => {
         });
 }
 
+module.exports.getAllMeetings = (req, res)=> {
+    let findUserDetails = () => {
+        return new Promise((resolve, reject) => {
+            UserModel.findOne({userId: req.params.userId})
+                .select()
+                .lean()
+                .exec((err, userDetails) => {
+                    if(err){
+                        loggerError(err.message,'Meeting controller: getAllMeetings',10);
+                        reject(generatejson(true,'Failed to find user details'));
+                    }else if(isEmpty(userDetails)){
+                        loggerInfo('No user found', 'Meeting Controller');
+                        reject(generatejson(true, 'No user found'))
+                    }else {
+                        resolve(userDetails);
+                    }
+                })
+        })
+    }
 
+    let findMeeting = (userDetails) => {
+        return new Promise((resolve, reject) => {
+            // if(){
 
+            // }else {
 
+            // }
 
+        })
+    }
 
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+module.exports.getMeetingDetails = (req, res) => {
+    MeetingModel.findOne({meetingId: req.body.meetingId})
+        .select()
+        .lean()
+        .exec((err, meetingDetails) => {
+            if(err){
+                loggerError(err.message,'Meeting controller: getMeetingDetails',10)
+                res.status(200).json({err: true, msg:'Failed to find meetings', err:err});
+            }else if(isEmpty(meetingDetails)){
+                loggerInfo('No meeting found','Meeting controller: getAllMeetingDetails');
+                res.status(200).json({err: true, msg:'No meeting found'})
+            }else {
+                res.status(200).json({success: true, msg:'Meeting found', data:meetingDetails});
+            }
+        })
+}
 
