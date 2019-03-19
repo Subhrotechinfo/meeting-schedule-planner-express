@@ -12,7 +12,7 @@ let { generateToken, decodeToken, secretkey } = require('../libs/token')
 let User = require('../models/user');
 let UserModel = mongoose.model('User');
 
-let login = (req,res) => {
+module.exports.login = (req,res) => {
     
     let findUser = () => {
         return new Promise((resolve,reject)=>{
@@ -83,7 +83,7 @@ let login = (req,res) => {
 }
 
 // let responseObj = new Response();
-let signUp = (req,res) => {
+module.exports.signUp = (req,res) => {
     //validate the user input
     let userInputValidator = () =>{
         return new Promise((resolve, reject)=>{
@@ -157,7 +157,7 @@ let signUp = (req,res) => {
 
 // Get all user details
 
-let getAllUsers = (req,res) => {
+module.exports.getAllUsers = (req,res) => {
     UserModel.find({email_verified:''})
         .select('-__v -_id -password')    
         .lean()
@@ -175,7 +175,7 @@ let getAllUsers = (req,res) => {
         });
 }   
 
-let getSingleUser = (req,res) => {
+module.exports.getSingleUser = (req,res) => {
     UserModel.findOne({userId: req.body.userId})
         .select('-__v -_id -password')
         .lean()
@@ -192,7 +192,7 @@ let getSingleUser = (req,res) => {
         })
 }
 
-let deleteUser = (req,res) => {
+module.exports.deleteUser = (req,res) => {
     UserModel.findOneAndRemove({userId: req.body.userId})
         .lean()
         .then((user)=>{
@@ -207,7 +207,7 @@ let deleteUser = (req,res) => {
         })
 }
 
-let editUser = (req,res) => {
+module.exports.editUser = (req,res) => {
     let updateUser = {
         fullName: req.body.fullName,
         userName: req.body.userName,
@@ -228,7 +228,7 @@ let editUser = (req,res) => {
         })
 }
 
-let verifyEmail = (req,res) => {
+module.exports.verifyEmail = (req,res) => {
     let findUser = () => {
         return new Promise((resolve, reject) => {
             if(req.body.userId){
@@ -273,7 +273,7 @@ let verifyEmail = (req,res) => {
         })
 }
 
-let resetPassword = (req,res) => {
+module.exports.resetPassword = (req,res) => {
 
     let findUser = () => {
         return new Promise((resolve, reject) => {
@@ -339,16 +339,4 @@ let resetPassword = (req,res) => {
         })
 
 }
-
-
-module.exports = {
-    signUp: signUp,
-    login:login,
-    getAllUsers: getAllUsers,
-    getSingleUser: getSingleUser,
-    editUser:editUser,
-    deleteUser:deleteUser,
-    resetPassword:resetPassword
-}
-
 

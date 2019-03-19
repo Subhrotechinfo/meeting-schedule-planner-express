@@ -3,7 +3,7 @@ const moment = require('moment');
 let timeZone = 'Asia/Calcutta'; 
 let secretkey = 'qwerftdgdbdhlsln';
 
-let generateToken = (data) => {
+module.exports.generateToken = (data) => {
     console.log(data)
     return new Promise((resolve, reject) => {
         try{
@@ -21,7 +21,7 @@ let generateToken = (data) => {
     });
 }
 
-let decodeToken = (token, secretkey) => {
+module.exports.decodeToken = (token, secretkey) => {
     return new Promise((resolve, reject) => {
         console.log(token, secretkey)
         jwt.verify(token, secretkey, (err, decoded)=>{
@@ -34,5 +34,6 @@ let decodeToken = (token, secretkey) => {
     })  
 }
 
-module.exports = {secretkey: secretkey, generateToken: generateToken, decodeToken: decodeToken};
+// module.exports = {secretkey: secretkey, generateToken: generateToken, decodeToken: decodeToken};
+
 

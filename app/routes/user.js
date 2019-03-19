@@ -1,8 +1,7 @@
-let express = require('express');
-let router = express.Router();
-let config = require('../../config/config')
-let { apiVersion } = config;
-let {signUp, login, getAllUsers, resetPassword, editUser, deleteUser, getSingleUser} = require('../controllers/user')
+const express = require('express');
+const router = express.Router();
+const { apiVersion } = require('../../config/config');
+const {signUp, login, getAllUsers, resetPassword, editUser, deleteUser, getSingleUser} = require('../controllers/user')
 // const { checkBody , isEmail } = require('express-validator/check')
 
 router.post(`/signup`, signUp);

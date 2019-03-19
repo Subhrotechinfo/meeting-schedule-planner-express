@@ -6,6 +6,7 @@ let now = () => {
     console.log(moment.utc().format());
     return moment.utc().format();
 }
+
 let getLocaltime = () => {
     console.log(moment().tz(timeZone).format());
     return moment().tz(timeZone).format();
@@ -27,8 +28,8 @@ let isSameDayAsToday = (inputDate) => {
     }
 }
 
-let check = () => {
-    console.log(new Date())
+// let check = () => {
+//     console.log(new Date())
     // console.log(moment().tz(timeZone).format().add(24))
     // console.log(Math.floor(Date.now()/1000) + (60*60*24));
     // .add(moment.duration(24,'hours'))
@@ -40,16 +41,16 @@ let check = () => {
     // console.log(moment('2019-03-10T13:47:42.654Z').isAfter(moment().tz(timeZone).format()))
     
     // console.log(moment(moment( new Date(),'LLLL').add(1,'days')).isBetween(new Date()))
-    let now =  moment().tz(timeZone).format();
-    let expire = moment(moment(),'LLLL').add(1,'days')
+//     let now =  moment().tz(timeZone).format();
+//     let expire = moment(moment(),'LLLL').add(1,'days')
 
-    if( expire.isSameDayAsToday){
-        console.log('true')
-    }else {
-        console.log('false');
-    }
-}
-check()
+//     if( expire.isSameDayAsToday){
+//         console.log('true')
+//     }else {
+//         console.log('false');
+//     }
+// }
+// check()
 
 module.exports = {
     now: now,

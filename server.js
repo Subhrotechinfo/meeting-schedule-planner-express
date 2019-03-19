@@ -2,19 +2,20 @@ const express =require('express');
 const mongoose  = require('mongoose');
 const fs = require('fs');
 const http = require('http');
-let  { port , dbStrng }  = require('./config/config') ;
-let  { loggerInfo, loggerError } = require('./app/libs/logger');
+const  { port , dbStrng }  = require('./config/config') ;
+const  { loggerInfo, loggerError } = require('./app/libs/logger');
 
-let user_route = require('./app/routes/user')
+const user_route = require('./app/routes/user')
+const meeting_route = require('./app/routes/meeting');
 
 const bodyParser = require('body-parser')
 const expressValidator = require('express-validator');
-
+const {setServer} = require('./app/libs/socketio')
 
 //create an instance of express
-let app = express();
-let modelsPath = './app/models';
-let routesPath = './app/routes';
+const app = express();
+const modelsPath = './app/models';
+const routesPath = './app/routes';
 
 
 app.use(bodyParser.json());
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
 
 app.use('/',user_route);
+app.use('/',meeting_route)
 
 app.get('/hello',(req, res)=>{
     res.send('OK');
@@ -39,8 +41,6 @@ fs.readdirSync(routesPath).forEach((file)=>{
         require(routesPath+'/'+file);
 });
 
-
-
 /**
  * Create HTTP server.
  */
@@ -49,6 +49,9 @@ let server =  http.createServer(app);
 console.log(`${port}`);
 // server.on('error', onError);
 // server.on('listening', onListening);
+
+//Set server for socket
+setServer(server)
 
 /**
  * Event listener for HTTP server "error" event.

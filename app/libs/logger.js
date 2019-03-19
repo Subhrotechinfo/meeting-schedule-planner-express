@@ -1,7 +1,7 @@
 let logger  = require('pino')();
 let moment = require('moment');
 
-let captureError = (errMsg, errOrgn, errLvl) => {
+module.exports.loggerError = (errMsg, errOrgn, errLvl) => {
 
     let errRspnse = {};
     errRspnse.timestamp = moment();
@@ -13,7 +13,7 @@ let captureError = (errMsg, errOrgn, errLvl) => {
     return errRspnse;
 }
 
-let captureInfo = (msg, orgn, imp) => {
+module.exports.loggerInfo = (msg, orgn, imp) => {
     let infoMsg = {};
     infoMsg.msg = msg;
     infoMsg.orgn = orgn;
@@ -22,7 +22,4 @@ let captureInfo = (msg, orgn, imp) => {
     return infoMsg;
 }
 
-module.exports = {
-    loggerError: captureError,
-    loggerInfo:  captureInfo
-}
+

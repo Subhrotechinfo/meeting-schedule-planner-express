@@ -3,8 +3,7 @@ let logger  = require('../libs/logger');
 let {loggerError, loggerInfo} = logger;
 let saltRounds = 10;
 
-
-let hashPassword = (password) => {
+module.exports.hashPassword = (password) => {
     // bcrypt.hash(myPlainTextPassword, saltRounds, (err, hash)=>{
     //     console.log('Password Function ',hash);
     //     return hash;
@@ -12,7 +11,7 @@ let hashPassword = (password) => {
     return bcrypt.hashSync(password , bcrypt.genSaltSync(saltRounds));
 }
 
-let comparePassword  = (oldPassword , hashPassword) => {
+module.exports.comparePassword  = (oldPassword , hashPassword) => {
     return new Promise((resolve, reject) => {
         bcrypt.compare(oldPassword, hashPassword, (err, result)=>{
             if(err){
@@ -24,22 +23,4 @@ let comparePassword  = (oldPassword , hashPassword) => {
         })
     })
 }
-
-
-module.exports = {
-    hashPassword: hashPassword,
-    comparePassword: comparePassword
-}
-
-
-
-
-
-
-
-
-
-
-
-
 
