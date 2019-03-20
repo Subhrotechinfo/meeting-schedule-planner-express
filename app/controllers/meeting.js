@@ -2,7 +2,7 @@ const mongoose  = require('mongoose');
 const shortid = require('shortid');
 const {loggerInfo, loggerError} = require('../libs/logger')
 const {generatejson} = require('../libs/response')
-const {now} = require('../libs/time')
+const {now, isSameDayAsToday} = require('../libs/time')
 const { isEmpty } = require('../libs/check')
 
 const User = require('../models/user');
@@ -82,20 +82,54 @@ module.exports.getAllMeetings = (req, res)=> {
         })
     }
 
-    let findMeeting = (userDetails) => {
+    let findMeetings = (userDetails) => {
         return new Promise((resolve, reject) => {
-            // if(){
-
-            // }else {
-
-            // }
+            if(userDetails.isAdmin == 'true'){
+                MeetingModel.find({hostId: req.body.userId})
+                    .select()
+                    .lean()
+                    .exec((err, meetingDetails) => {
+                        if(err){
+                            loggerError(err.message,'Meeting Controller: findMeeting');
+                            reject(generatejson(true, 'Failed to find meeting'))
+                        }else if(isEmpty(meetingDetails)){
+                            loggerInfo('No meeting found', 'meeting controller: findMeetings')
+                            reject(generatejson(true, 'No meeting Found'))
+                        }else {
+                            resolve(generatejson(false, 'Meetings Found'))
+                        }
+                    })
+            }else {
+                MeetingModel.findOne({participantId: req.body.params})
+                    .select()
+                    .lean()
+                    .exec((err, meetingDetails) => {
+                        if(err){
+                            loggerError(err.message, 'Meeting Controller: findMeeting');
+                            reject(generatejson(true, 'Failed to find meetings'));
+                        }else if(isEmpty(meetingDetails)){
+                            loggerError('No Meetings found','Meeting Controller: findMeetings');
+                            reject(generatejson(true, 'No Meeting Found'));
+                        }else {
+                            resolve(meetingDetails)
+                        }
+                    })
+            }
 
         })
     }
 
+    findUserDetails(req, res)
+        .then(findMeetings)
+        .then((data)=>{
+            res.status(200).json({success:true, msg:'Meetings found', data:data});
+        })
+        .catch((err) => {
+            res.status(200).json({err: err, msg:'Something went wrong'});
+        })
 }
 
-module.exports.getMeetingDetails = (req, res) => {
+module.exports.getMeetingDetail = (req, res) => {
     MeetingModel.findOne({meetingId: req.body.meetingId})
         .select()
         .lean()
@@ -111,4 +145,168 @@ module.exports.getMeetingDetails = (req, res) => {
             }
         })
 }
+
+
+module.exports.deleteMeeting = (req, res) => {
+    
+    let findMeetingDetails = () => {
+        return new Promise((resolve, reject) => {
+            MeetingModel.findOne({meetingId: req.body.meetingId})
+                .select()
+                .lean()
+                .exec((err, meetingDetails) => {
+                    if(err){
+                        loggerError(err.message, 'Meeting controller: findMeetingDetails');
+                        reject(generatejson(true, 'Failed to find meeting details'));
+                    }else if(isEmpty(meetingDetails)){
+                        reject(generatejson(true, 'No meeting found'));
+                    }else {
+                        resolve(meetingDetails);
+                    }
+                })
+        })
+    }
+
+    let deleteMeeting = (meetingDetails) => {
+        return new Promise((resolve, reject) => {
+            MeetingModel.findOneAndRemove({meetingId: req.body.meetingId})
+                .exec((err, retrievedMeeting) => {
+                    if(err){
+                        loggerError(err.message,'Meeting Controller:deleteMeeting')
+                        reject(generatejson(true, 'Failed to delete meeting'))
+                    }else if(isEmpty(retrievedMeeting)){
+                        reject(generatejson(true, 'No meeting found'));
+                    }else {
+                        //send email
+                        resolve(retrievedMeeting);
+                    }
+                })
+        })
+    }
+    findMeetingDetails(req, res)
+        .then(deleteMeeting)
+        .then((data) => {
+            res.status(200).json({success: true, msg:'Meeting deleted successfully', data: data});
+        })
+        .catch((err)=> {
+            res.status(200).json({err: err, msg:'Something went wrong'});
+        })
+
+
+}
+
+module.exports.updateMeeting = (req, res) => {
+    let findMeeting = () => {
+        return new Promise((resolve, reject) => {
+            console.log('1');
+            MeetingModel.findOne({meetingId: req.body.meetingId})
+                .select()
+                .lean()
+                .exec((err, meetingDetails) => {
+                    if(err){
+                        loggerError(err.message,'Meeting Controller: UpdateMeeting');
+                        reject(generatejson(true,'Failed to find meeting'));
+                    }else if(isEmpty(meetingDetails)){
+                        loggerInfo('No meeting found','Meeting Controller:findMeetingDetails')
+                        reject(generatejson(true, 'No meeting, found'));
+                    }else {
+                        resolve(meetingDetails)
+                    }
+                })
+        })
+    }
+
+    let updateMeeting = (meetingDetails) => {
+        return new Promise((resolve, reject) => {
+            console.log(meetingDetails)
+            let options = req.body;
+            MeetingModel.updateOne({meetingId: req.body.meetingId}, options)
+                .exec((err, updatedMeeting) => {
+                    if(err){
+                        loggerError(err.message,'Meeting Controller: UpdateMeeting');
+                        reject(generatejson(true,'Failed to update meeting details'));
+                    }else if(isEmpty(updatedMeeting)){
+                        reject(generatejson(true,'No meeting found'));
+                    }else {
+                        //send email
+                        resolve(updatedMeeting);
+                    } 
+                })  
+        })
+    }
+
+    findMeeting(req, res)
+        .then(updateMeeting)
+        .then((data) => {
+            res.status(200).json({succes:true, msg:'Meeting updated', data:data});
+        })
+        .catch((err) => {
+            res.status(200).json({err: err, msg:'something went wrong'});
+        })
+
+}
+
+module.exports.remainderForCurrentDayMeeting = (req, res) => {
+    let findUserDetail = () => {
+        return new Promise((resolve , reject) => {
+            UserModel.findOne({userId: req.body.userId})
+                .select()
+                .lean()
+                .exec((err, userDetails) => {
+                    if(err){
+                        loggerError(err.message,'Meeting Controller: findUserDetails');
+                        reject(generatejson(true, 'Failed to find user details'))
+                    }else if(isEmpty(userDetails)){
+                        reject(generatejson(true, 'No User found'))
+                    }else {
+                        resolve(userDetails)
+                    }
+                })
+        })
+    }
+
+    let findMeeting = (userDetails) => {
+        return new Promise((resolve, reject) => {
+            if(userDetails.isAdmin == 'true'){
+                MeetingModel.findOne({hostId: req.body.hostId})
+                    .select()
+                    .lean()
+                    .exec((err, meetingDetails) => {
+                        if(err){
+                            loggerError(err.message,'Meeting Controller: findMeeting')
+                            reject(generatejson(true,'Failed to find meeting'));
+                        }else if(isEmpty(meetingDetails)){
+                            reject(generatejson(true, 'No Meeting found'));
+                        }else {
+                            let i= 0;
+                            for(let meeting of meetingDetails){
+                                if(isSameDayAsToday(meeting.meetingStartDate)){
+                                    //send email
+                                    i+=1;
+                                }
+                                
+                            }
+                            if(i>0){
+                                resolve(meetingDetails);
+                            }else {
+                                reject(generatejson(true,'No meeting today'));
+                            } 
+                        }
+                    })
+            }
+        })
+    } 
+
+    findUserDetail(req, res)
+        .then(findMeeting)
+        .then((data) => {
+            res.status(200).json({success: true, msg:'Remainder Email Send', data:data});
+        })
+        .catch((err) => {
+            res.status(200).json({err:err, msg:'Something went wrong'});
+        })
+
+}
+
+
 

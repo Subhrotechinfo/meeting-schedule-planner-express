@@ -2,22 +2,22 @@ let moment = require('moment');
 let momenttz = require('moment-timezone');
 let timeZone = 'Asia/Calcutta'; 
 
-let now = () => {
+module.exports.now = () => {
     console.log(moment.utc().format());
     return moment.utc().format();
 }
 
-let getLocaltime = () => {
+module.exports.getLocaltime = () => {
     console.log(moment().tz(timeZone).format());
     return moment().tz(timeZone).format();
 } 
 
-let convertToLocalTime  = (time) => {
+module.exports.convertToLocalTime  = (time) => {
     console.log(momenttz.tz(time, timeZone).format('LLLL'));
     return momenttz.tz(time, timeZone).format('LLLL') 
 }
 
-let isSameDayAsToday = (inputDate) => {
+module.exports.isSameDayAsToday = (inputDate) => {
     if(new Date(inputDate).getUTCDate() == new Date().getUTCDate() && new Date() < new Date(inputDate)){
         console.log('sameday');
         console.log(Math.floor(Date.now()/1000) + (60*60*24));
@@ -52,10 +52,10 @@ let isSameDayAsToday = (inputDate) => {
 // }
 // check()
 
-module.exports = {
-    now: now,
-    getLocaltime: getLocaltime,
-    convertToLocalTime: convertToLocalTime,
-    isSameDayAsToday: isSameDayAsToday
-}
+// module.exports = {
+//     now: now,
+//     getLocaltime: getLocaltime,
+//     convertToLocalTime: convertToLocalTime,
+//     isSameDayAsToday: isSameDayAsToday
+// }
 
