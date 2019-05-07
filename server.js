@@ -17,7 +17,6 @@ const app = express();
 const modelsPath = './app/models';
 const routesPath = './app/routes';
 
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
@@ -120,4 +119,3 @@ mongoose.connection.on('open', (err) => {
 });
 
 module.exports = app;
-

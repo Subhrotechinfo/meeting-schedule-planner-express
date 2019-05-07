@@ -34,6 +34,14 @@ module.exports.decodeToken = (token, secretkey) => {
     })  
 }
 
-// module.exports = {secretkey: secretkey, generateToken: generateToken, decodeToken: decodeToken};
-
-
+module.exports.verifyClaimWithoutSecret = (token) => {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token,secretkey, (err, decoded) => {
+            if(err){
+                reject(err);
+            }else {
+                resolve(decoded);
+            }
+        });
+    });
+}
