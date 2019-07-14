@@ -2,6 +2,7 @@ const express =require('express');
 const mongoose  = require('mongoose');
 const fs = require('fs');
 const http = require('http');
+const cors = require('cors');
 const  { port , dbStrng }  = require('./config/config') ;
 const  { loggerInfo, loggerError } = require('./app/libs/logger');
 
@@ -17,6 +18,7 @@ const app = express();
 const modelsPath = './app/models';
 const routesPath = './app/routes';
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
@@ -95,7 +97,7 @@ setServer(server)
 // });
 
 server.listen(port, () => {
-    console.log('Example app listening on port 3000');
+    console.log('Express is running on 8080');
     let db = mongoose.connect(dbStrng, {useNewUrlParser: true});
     console.log('Connected to MongoDB');
 })

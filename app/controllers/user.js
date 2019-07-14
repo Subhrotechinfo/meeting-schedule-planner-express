@@ -8,6 +8,7 @@ let { now } = require('../libs/time');
 let { hashPassword } = require('../libs/bcrypt');
 let { comparePassword }  = require('../libs/bcrypt')
 let { generateToken, decodeToken, secretkey } = require('../libs/token')
+let {sendEmail}  = require('./../libs/email')
 
 let User = require('../models/user');
 let UserModel = mongoose.model('User');
@@ -52,11 +53,8 @@ module.exports.login = (req,res) => {
                 comparePassword(req.body.password, retrievedUserDetail.password)
                 .then((isMatch) => {
                     if(isMatch){
-                        // let retrievedUserDetail_Obj = retrievedUserDetail.toObject();
-                        // delete retrievedUserDetail_Obj.__v;
-                        // delete retrievedUserDetail_Obj._id;
+                        // retrievedUserDetail.password = delete retrievedUserDetail.password;
                         retrievedUserDetail.last_login = now();
-                        console.log(retrievedUserDetail)
                         resolve(retrievedUserDetail);
                     }else {
                         reject(generatejson(true,'wrong password'));
@@ -71,11 +69,25 @@ module.exports.login = (req,res) => {
             
         });
     }//password validator end 
+    let tokenGenerate = (retrievedUser) => {
+        return new Promise((resolve, reject)=>{
+            generateToken(retrievedUser)
+            .then((tokenDetail)=>{
+                retrievedUser.token = tokenDetail; 
+                resolve(retrievedUser);
+            })
+            .catch((err)=>{
+                reject(err);
+            })
+        })
+        
+    }
 
     findUser(req,res)
         .then(passwordValidator)
+        .then(tokenGenerate)
         .then((loggedinUser) => {
-            res.status(200).json({msg: 'login success', data: {last_login: loggedinUser.last_login}});
+            res.status(200).json({msg: 'login success', data: {token: loggedinUser.token}});
         })
         .catch((err) => {
             res.status(200).json({err:err});
@@ -126,7 +138,13 @@ module.exports.signUp = (req,res) => {
                             .then((newUser)=> {
                                 console.log('saved user', newUser.emailId);
                                 if(!isEmpty(newUser)){
-                                    delete newUser.password;
+                                    // delete newUser.password;
+                                    //send email
+                                    sendEmail(newUser.emailId, 'http://facebook.com')   
+                                        .then((send)=>{
+                                            console.log('Email Send')
+                                        })
+                                        .catch((err)=>console.log(err));
                                     resolve(newUser)
                                 } else {
                                     reject(generatejson(true, 'Something went wrong while saving the data.'));
@@ -320,7 +338,7 @@ module.exports.resetPassword = (req,res) => {
             decodeToken(tokenDetail, secretkey)
                 .then((decoded)=>{
                     console.log(decoded);
-                    delete decoded.iat;
+                    // delete decoded.iat;
                     resolve(decoded);
                 })
                 .catch((err)=>{
@@ -337,6 +355,5 @@ module.exports.resetPassword = (req,res) => {
         .catch((err)=>{
             res.status(200).json({err:err});
         })
-
 }
 
