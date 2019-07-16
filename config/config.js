@@ -8,7 +8,7 @@ config.db = {
 }
 
 config.apiVersion = '/api/v1';
-
+config.aws = '13.235.166.206';
 module.exports = {
     port: config.port,
     allowedCorsOrigin: config.allowedCorsOrigin,
