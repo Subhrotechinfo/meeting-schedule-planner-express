@@ -99,7 +99,7 @@ setServer(server)
 server.listen(port, () => {
     console.log('Express is running on 8080');
     let db = mongoose.connect(dbStrng, {useNewUrlParser: true});
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB Successfull');
 })
 
 /**
