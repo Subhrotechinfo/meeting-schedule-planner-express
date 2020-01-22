@@ -1,4 +1,4 @@
-let bcrypt = require('bcrypt');
+let bcrypt = require('bcryptjs');
 let logger  = require('../libs/logger');
 let {loggerError, loggerInfo} = logger;
 let saltRounds = 10;

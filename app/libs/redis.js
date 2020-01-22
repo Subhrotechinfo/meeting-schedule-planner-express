@@ -1,14 +1,16 @@
 const redis = require('redis');
 const {isEmpty} =  require('./check')
 
-let client = redis.createClient({
+const client = redis.createClient({
     port:6379,
-    host:'127.0.0.1'
+    host:process.env.REDIS_HOST || '0.0.0.0'
 });
 
 client.on('connect', ()=>{
     console.log('Redis connected successfully')
 });
+
+client.set('Dummy','Value Arred');
 
 module.exports.getAllUsersInHash = (hashName, cb) => {
     client.HGETALL(hashName, (err, result)=>{
