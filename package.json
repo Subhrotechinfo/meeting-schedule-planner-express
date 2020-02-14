@@ -30,6 +30,6 @@
   },
   "devDependencies": {
     "nodemon": "^1.18.10",
-    "yarn": "^1.13.0"
+    "yarn": "^1.22.0"
   }
 }
